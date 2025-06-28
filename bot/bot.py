@@ -96,6 +96,13 @@ class Bot(commands.Bot):
             if not player:
                 return await send_response(interaction, "I'm not in a channel")
             await player.stop()
+        
+        @self.tree.command(name="rchelp", description="Show help message for Radio Caimanos")
+        async def rchelp(interaction: discord.Interaction):
+            await defer(interaction)
+            help_message = Config.HELP_MESSAGE
+            embed = discord.Embed(title="🎵 Caimanos Radio Bot - Music Commands & Controls", description=help_message, color=Config.COLOR)
+            await interaction.response.send_message(embed=embed)
 
         @self.command('sync')
         async def sync(ctx):

@@ -89,9 +89,7 @@ class Config:
     )
 
     # Help message
-    HELP_MESSAGE = f"""**🎵 Caimanos Radio Bot - Music Commands & Controls**
-
-**🎶 Basic Playback Commands:**
+    HELP_MESSAGE = f"""**🎶 Basic Playback Commands:**
 • `/play <url/search>` - Add song or playlist to queue
 • `/playnext <url/search>` - Add song to play next in queue
 • `/pause` - Pause current song
