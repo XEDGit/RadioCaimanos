@@ -1,12 +1,12 @@
 import discord
 
 
-async def make_search_view(player, interaction, search_result):    
+async def make_search_view(player, interaction, search_result):
     entries = search_result['entries'][:10]  # Limit to 10 for dropdown
 
     # Create embed
     embed = discord.Embed(
-        title=f"Found {len(entries)} results:", 
+        title=f"Found {len(entries)} results:",
         description='',
         color=0x00ff00
     )
@@ -16,7 +16,7 @@ async def make_search_view(player, interaction, search_result):
     for i, entry in enumerate(entries):
         duration = entry.get('duration', 0)
         duration_str = f"{duration//60}:{duration%60:02f}" if duration else "Unknown"
-        
+
         options.append(discord.SelectOption(
             label=entry['title'][:100],
             description=f"Duration: {duration_str}",
@@ -36,16 +36,16 @@ async def make_search_view(player, interaction, search_result):
 
             choice = int(select.values[0])
             self.selected_url = self.entries[choice]['url']
-            
+
             embed = discord.Embed(
                 title="✅ Song Selected",
                 description=f"Selected: **{self.entries[choice]['title']}**",
                 color=0x00ff00
             )
-            
+
             await interaction.response.edit_message(embed=embed, view=None)
             self.stop()
-            
+
     view = SearchView(player, entries)
     msg = await interaction.followup.send(embed=embed, view=view)
 

@@ -39,7 +39,7 @@ class Bot(commands.Bot):
                 return
             await player.play(interaction, url)
             await send_response(interaction, f"Done!")
-        
+
         @self.tree.command(name="playnext", description="Play song from url or search a song, play as next song")
         async def playnext(interaction: discord.Interaction, url: str | None = None):
             await defer(interaction)
@@ -56,12 +56,49 @@ class Bot(commands.Bot):
             await defer(interaction)
             player = self.manager.connected(interaction)
             if not player:
-                return
+                return await send_response(interaction, "I'm not in a channel")
             await player.pause()
             await send_response(interaction, f"Done!")
-        
+
+        @self.tree.command(name="resume", description="Resume paused song")
+        async def resume(interaction: discord.Interaction):
+            await defer(interaction)
+            player = self.manager.connected(interaction)
+
+            if not player:
+                return await send_response(interaction, "I'm not in a channel")
+            if not player.client.is_paused():
+                return await send_response(interaction, "The playback is not paused")
+
+            await player.play(interaction)
+            await send_response(interaction, f"Done!")
+
+        @self.tree.command(name="skip", description="Skip current song or multiple songs")
+        async def skip(interaction: discord.Interaction, n: int = 1):
+            await defer(interaction)
+            player = self.manager.connected(interaction)
+            if not player:
+                return await send_response(interaction, "I'm not in a channel")
+            await player.skip(interaction, n)
+
+        @self.tree.command(name="rewind", description="Go back to previous song(s)")
+        async def rewind(interaction: discord.Interaction, n: int = 1):
+            await defer(interaction)
+            player = self.manager.connected(interaction)
+            if not player:
+                return await send_response(interaction, "I'm not in a channel")
+            await player.rewind(interaction, n)
+
+        @self.tree.command(name="stop", description="Stop playback and disconnect from voice channel")
+        async def stop(interaction: discord.Interaction):
+            await defer(interaction)
+            player = self.manager.connected(interaction)
+            if not player:
+                return await send_response(interaction, "I'm not in a channel")
+            await player.stop()
+
         @self.command('sync')
-        async def sync(ctx): 
+        async def sync(ctx):
             try:
                 logger.info('Syncing...')
                 synced = await self.tree.sync(guild=None)

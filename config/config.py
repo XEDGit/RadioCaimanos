@@ -4,19 +4,19 @@ import discord
 
 class Config:
     """Bot configuration settings."""
-    
+
     # Time settings
     MINUTE = 60
     IDLE_TIMEOUT = 10 * MINUTE
     SONGS_PER_PAGE = 8
-    
+
     # Bot settings
     COMMAND_PREFIX = '/'
-    
+
     # Audio settings
     DEFAULT_VOLUME = 0.5
     MAX_HISTORY_SIZE = 100
-    
+
     # YouTube DL options
     YTDL_OPTIONS = {
         'format': 'bestaudio/best',
@@ -33,7 +33,7 @@ class Config:
         'keep_fragments': False,
         'buffersize': 16384,
     }
-    
+
     # FFmpeg options
     FFMPEG_OPTIONS = {
         'before_options': (
@@ -66,7 +66,7 @@ class Config:
             '-async 0'
         ),
     }
-    
+
     # Bot emojis
     EMOJIS_RAW = {
         'next': 1386494925562052709,
@@ -87,36 +87,41 @@ class Config:
     EMOJIS = dict(
         [(k, discord.PartialEmoji(name=k, id=v)) for k, v in EMOJIS_RAW.items()]
     )
-    
+
     # Help message
-    HELP_MESSAGE = f"""**🎵 Caimanos Radio Commands:**
-`!rcplay <url>` - Add song/playlist to bottom of queue (alias: `!rcp`)
-`!rcplaynow <url>` - Play song/playlist to top of the queue (alias: `!rcpn`)
-`!rcpause` - Pause current song
-`!rcresume` - Resume paused song
-`!rcskip [number]` - Skip current song or multiple songs (default 1)
-`!rclast [number]` - Rewind to previous song(s) (default 1)
-`!rcqueue` - Show current queue
-`!rctop [number]` - Move specified song to top of queue (default: 1)
-`!rcshuffle` - Shuffle the entire queue
-`!rcvolume <0-100>` - Set volume (0-100%)
-`!rcstop` - Stop playback and clear the queue
-`!rchelp` - Show this help message
+    HELP_MESSAGE = f"""**🎵 Caimanos Radio Bot - Music Commands & Controls**
 
-**📱 Interactive Control Panel Buttons:**
-**Top Row:**
-{EMOJIS['back']} - Previous track (rewind to last song)
-{EMOJIS['play']} - Play/Pause toggle
-{EMOJIS['next']} - Skip current song
-{EMOJIS['shuffle']} - Shuffle queue
-{EMOJIS['stop']} - Stop and disconnect
+**🎶 Basic Playback Commands:**
+• `/play <url/search>` - Add song or playlist to queue
+• `/playnext <url/search>` - Add song to play next in queue
+• `/pause` - Pause current song
+• `/resume` - Resume paused song
+• `/skip [number]` - Skip current song or multiple songs (default: 1)
+• `/rewind [number]` - Go back to previous song(s) (default: 1)
+• `/stop` - Stop playback and disconnect from voice channel
 
-**Bottom Row:**
-{EMOJIS['uparrow']} - Scroll up in song list
-{EMOJIS['rotate']} - Reset view to current song
-{EMOJIS['downarrow']} - Scroll down in song list
-{EMOJIS['volumedown']} - Volume down (-10%)
-{EMOJIS['volume']} - Volume up (+10%)
+**🎛️ Interactive Control Panel:**
+The bot displays an interactive control panel with clickable buttons:
 
-Caimanos Radio can read any type of links which direct to a page with a video/audio content in it"""
+**Main Controls (Top Row):**
+{EMOJIS['back']} **Previous** - Go back to previous song
+{EMOJIS['play']}**/**{EMOJIS['pause']} **Play/Pause** - Toggle playback
+{EMOJIS['next']} **Skip** - Skip to next song
+{EMOJIS['shuffle']} **Shuffle** - Randomize queue order
+{EMOJIS['stop']} **Stop** - Stop and disconnect
+
+**Playlist Navigation (Middle Row):**
+{EMOJIS['uparrow']} **Scroll Up** - View earlier songs in playlist
+{EMOJIS['rotate']} **Current Song** - Jump back to currently playing song
+{EMOJIS['downarrow']} **Scroll Down** - View later songs in playlist
+
+**Volume Controls (Bottom Row):**
+{EMOJIS['volumedown']} **Volume Down** - Decrease volume by 10%
+{EMOJIS['volume']} **Volume Up** - Increase volume by 10%
+
+**📺 Supported Sources:**
+✅ YouTube videos and playlists
+✅ Direct audio/video file links
+✅ Search terms (automatically searches YouTube)
+✅ Most websites with embedded audio/video content"""
     COLOR = 0x2596be

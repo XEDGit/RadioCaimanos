@@ -93,16 +93,16 @@ class ControlPanel(discord.ui.View):
             artist = song.artist
             url = song.url
             description += f"{i+1}. {title} - {artist}\n{url}\n\n"
-        
+
         if not self.playlist:
             description += 'No songs in the queue, use /play *url* to play songs'
-        
+
         file_content = io.StringIO(description)
         file = discord.File(file_content, filename="playlist.txt") # type: ignore
 
         await interaction.user.send("🎵 **Current Playlist**", file=file)
         await interaction.followup.send("✅ Playlist sent to your DMs!", ephemeral=True)
-    
+
     @discord.ui.button(emoji=Config.EMOJIS['minus'], style=discord.ButtonStyle.secondary, row=2)
     async def minimize_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await defer(interaction)
@@ -112,4 +112,4 @@ class ControlPanel(discord.ui.View):
         else:
             button.emoji = Config.EMOJIS['minus']
         await self.player.make_control_panel()
-        
+

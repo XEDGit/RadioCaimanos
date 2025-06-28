@@ -34,7 +34,7 @@ class ChannelPlayer:
             try:
                 await asyncio.sleep(30)
                 human_members = [member for member in self.channel.members if not member.bot]
-                
+
                 if len(human_members) == 0:
                     logger.info(f"No users in voice channel {self.channel.name}, disconnecting...")
                     await self.stop()
@@ -102,7 +102,7 @@ class ChannelPlayer:
             self.client.resume()
         elif not self.client.is_playing():
             await self.loop()
-    
+
     async def skip(self, interaction, n):
         try:
             n = int(n)
@@ -110,7 +110,7 @@ class ChannelPlayer:
             await send_response(interaction, f"The amount of songs to skip specified: '{n}' is not a number")
         self.index += n - 1
         self.client.stop()
-    
+
     async def rewind(self, interaction, n):
         try:
             n = int(n)
@@ -118,7 +118,7 @@ class ChannelPlayer:
             await send_response(interaction, f"The amount of songs to skip specified: '{n}' is not a number")
         self.index -= n
         self.client.stop()
-    
+
     async def change_volume(self, interaction, volume_str: str):
         """Change the volume (0-100)"""
         try:
@@ -139,7 +139,7 @@ class ChannelPlayer:
 
         except ValueError:
             await send_response(interaction, "❌ Please provide a valid volume between 0 and 100!")
-    
+
     async def shuffle(self, interaction: discord.Interaction):
         if len(self.playlist) < 2:
             await send_response(interaction, "Not enough songs to shuffle!")
@@ -160,7 +160,7 @@ class ChannelPlayer:
         self.client.stop()
         await self.client.disconnect()
         self.bot.manager.channels.remove(self)
-    
+
     async def search_yt(self, interaction: discord.Interaction, url: str | None):
         if not url:
             return None
@@ -184,7 +184,7 @@ class ChannelPlayer:
         parsed_url = url
         if not url.startswith('https://'):
             parsed_url = await self.search_yt(interaction, url)
-        
+
         if not parsed_url:
             await send_response(interaction, f'No search results found for: {url}')
             return
