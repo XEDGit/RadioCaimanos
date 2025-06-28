@@ -116,7 +116,7 @@ class ChannelPlayer:
             n = int(n)
         except:
             await send_response(interaction, f"The amount of songs to skip specified: '{n}' is not a number")
-        self.index -= n
+        self.index -= n + 1
         self.client.stop()
 
     async def change_volume(self, interaction, volume_str: str):

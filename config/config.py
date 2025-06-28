@@ -101,21 +101,25 @@ class Config:
 **🎛️ Interactive Control Panel:**
 The bot displays an interactive control panel with clickable buttons:
 
-**Main Controls (Top Row):**
+**Music Controls:**
 {EMOJIS['back']} **Previous** - Go back to previous song
 {EMOJIS['play']}**/**{EMOJIS['pause']} **Play/Pause** - Toggle playback
 {EMOJIS['next']} **Skip** - Skip to next song
 {EMOJIS['shuffle']} **Shuffle** - Randomize queue order
 {EMOJIS['stop']} **Stop** - Stop and disconnect
 
-**Playlist Navigation (Middle Row):**
+**Playlist Navigation:**
 {EMOJIS['uparrow']} **Scroll Up** - View earlier songs in playlist
 {EMOJIS['rotate']} **Current Song** - Jump back to currently playing song
 {EMOJIS['downarrow']} **Scroll Down** - View later songs in playlist
 
-**Volume Controls (Bottom Row):**
+**Volume Controls:**
 {EMOJIS['volumedown']} **Volume Down** - Decrease volume by 10%
 {EMOJIS['volume']} **Volume Up** - Increase volume by 10%
+
+**Extras:**
+📋 **Send me this playlist**: Send the current playlist to your direct messages
+{EMOJIS['minus']}**/**{EMOJIS['plus']} **Minimize/Maximize** - Resize the control panel
 
 **📺 Supported Sources:**
 ✅ YouTube videos and playlists

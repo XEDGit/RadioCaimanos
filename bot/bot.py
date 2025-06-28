@@ -80,6 +80,7 @@ class Bot(commands.Bot):
             if not player:
                 return await send_response(interaction, "I'm not in a channel")
             await player.skip(interaction, n)
+            await send_response(interaction, f"Done!")
 
         @self.tree.command(name="rewind", description="Go back to previous song(s)")
         async def rewind(interaction: discord.Interaction, n: int = 1):
@@ -88,6 +89,7 @@ class Bot(commands.Bot):
             if not player:
                 return await send_response(interaction, "I'm not in a channel")
             await player.rewind(interaction, n)
+            await send_response(interaction, f"Done!")
 
         @self.tree.command(name="stop", description="Stop playback and disconnect from voice channel")
         async def stop(interaction: discord.Interaction):
@@ -96,13 +98,14 @@ class Bot(commands.Bot):
             if not player:
                 return await send_response(interaction, "I'm not in a channel")
             await player.stop()
+            await send_response(interaction, f"Done!")
         
         @self.tree.command(name="rchelp", description="Show help message for Radio Caimanos")
         async def rchelp(interaction: discord.Interaction):
             await defer(interaction)
             help_message = Config.HELP_MESSAGE
             embed = discord.Embed(title="🎵 Caimanos Radio Bot - Music Commands & Controls", description=help_message, color=Config.COLOR)
-            await interaction.response.send_message(embed=embed)
+            await send_response(interaction, '', embed=embed, delay=None)
 
         @self.command('sync')
         async def sync(ctx):
