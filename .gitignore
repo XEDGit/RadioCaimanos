@@ -1,0 +1,4 @@
+.venv
+discord_bot_token
+*.log
+__*__
