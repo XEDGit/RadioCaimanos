@@ -4,8 +4,12 @@ logger = logging.getLogger(__name__)
 
 class Song:
     def __init__(self, url: str, name, artist, ytdl):
-        if i := url.find('v=') != -1 and 'index=' in url:
-            url = url[:url.find('&', i)]
+        if (i := url.find('v=')) != -1 and (i := url.find('&', i)) != -1:
+            url = url[:i]
+        elif 'soundcloud.com' in url and (i := url.find('?')) != -1:
+            url = url[:i]
+        
+        logger.info(f'Creating song URL: {url}')
 
         self.url = url
         self.data = None

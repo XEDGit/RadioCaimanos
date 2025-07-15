@@ -55,8 +55,7 @@ class ChannelPlayer:
             await self.loop()
 
     async def loop(self):
-        if self.index >= len(self.playlist):
-            # No more songs to play
+        if not len(self.playlist) or self.index >= len(self.playlist):
             await self.stop()
             return
 
@@ -75,7 +74,16 @@ class ChannelPlayer:
         logger.info(f'Playing song: {self.song.name}')
         audio_source = discord.FFmpegPCMAudio(self.song.data['url'], before_options=Config.FFMPEG_OPTIONS['before_options'], options=Config.FFMPEG_OPTIONS['options'])
         volume_source = discord.PCMVolumeTransformer(audio_source, volume=self.volume)
-        self.client.play(volume_source, after=lambda _: asyncio.run_coroutine_threadsafe(self.after_loop(), self.bot.loop))
+        try:
+            self.client.play(volume_source, after=lambda _: asyncio.run_coroutine_threadsafe(self.after_loop(), self.bot.loop))
+        except discord.ClientException as e:
+            if 'Not connected to voice' in str(e):
+                self.client = await self.channel.connect()
+                self.index -= 1
+                await self.loop()
+            else:
+                logger.error(f"Error playing audio: {e}")
+                return
 
     async def after_loop(self):
         if self.song:
@@ -85,10 +93,7 @@ class ChannelPlayer:
         if not self.client or not self.client.is_connected():
             await self.stop()
             return
-        if self.index < len(self.playlist):
-            await self.loop()
-        else:
-            pass
+        await self.loop()
 
     async def pause(self):
         if self.client.is_playing():
@@ -198,12 +203,19 @@ class ChannelPlayer:
             await send_response(interaction, f'No results found for: {url}')
             return
 
-
         if 'entries' in data:
             for d in data['entries']:
                 song_url = d['url'] if d['url'].find('youtube.') == -1 else f'https://www.youtube.com/watch?v={d["id"]}'
+
+                if 'title' not in d:
+                    if 'soundcloud.com' in song_url:
+                        if (i := song_url.rfind('/')) != -1:
+                            d['title'] = ' '.join(song_url[i+1:].split('-'))
+                        else:
+                            d['title'] = 'unknown'
+
                 if at_end:
-                    self.playlist.append(Song(song_url, d['title'], d.get('artist', d.get('channel', '')), self.parse_url_impl))
+                    self.playlist.append(Song(song_url, d.get('title', 'unknown title'), d.get('artist', d.get('channel', '')), self.parse_url_impl))
                 else:
                     self.playlist.insert(self.index+1, Song(song_url, d['title'], d.get('artist', d.get('channel', '')), self.parse_url_impl))
         else:

@@ -30,6 +30,9 @@ def main():
         asyncio.run(connect_bot(bot, token_file.read_text().strip()))
     except KeyboardInterrupt:
         logging.info('Bot stopped by user')
-
+    finally:
+        if bot:
+            asyncio.run(bot.close())
+        logging.info('Bot has been shut down')
 if __name__ == '__main__':
     main()

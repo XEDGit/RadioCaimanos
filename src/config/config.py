@@ -17,7 +17,7 @@ class Config:
     DEFAULT_VOLUME = 0.5
     MAX_HISTORY_SIZE = 100
 
-    # YouTube DL options
+    # Streaming settings
     YTDL_OPTIONS = {
         'format': 'bestaudio/best',
         'extractaudio': True,
@@ -34,7 +34,6 @@ class Config:
         'buffersize': 16384,
     }
 
-    # FFmpeg options
     FFMPEG_OPTIONS = {
         'before_options': (
             '-reconnect 1 '
@@ -44,7 +43,7 @@ class Config:
             '-fflags +discardcorrupt '
             '-analyzeduration 0 '
             '-probesize 32 '
-            '-thread_queue_size 512 '
+            '-thread_queue_size 1024 '
             '-loglevel quiet '
             '-re '
             '-avoid_negative_ts make_zero '
@@ -53,21 +52,19 @@ class Config:
         ),
         'options': (
             '-vn '
-            '-bufsize 128k '
-            '-maxrate 128k '
-            '-threads 1 '
+            '-bufsize 512k '
+            '-maxrate 512k '
+            '-threads 4 '
             '-ac 2 '
             '-ar 48000 '
             '-f s16le '
-            '-filter:a "aresample=async=0" '
+            '-filter:a "aresample=async=1" '
             '-af "asetrate=48000,aresample=48000" '
             '-shortest '
-            '-vsync 0 '
-            '-async 0'
+            '-vsync 0'
         ),
     }
 
-    # Bot emojis
     EMOJIS_RAW = {
         'next': 1386494925562052709,
         'uparrow': 1386494535130943579,
@@ -88,7 +85,6 @@ class Config:
         [(k, discord.PartialEmoji(name=k, id=v)) for k, v in EMOJIS_RAW.items()]
     )
 
-    # Help message
     HELP_MESSAGE = f"""**🎶 Basic Playback Commands:**
 • `/play <url/search>` - Add song or playlist to queue
 • `/playnext <url/search>` - Add song to play next in queue
@@ -109,7 +105,7 @@ The bot displays an interactive control panel with clickable buttons:
 {EMOJIS['stop']} **Stop** - Stop and disconnect
 
 **Playlist Navigation:**
-{EMOJIS['uparrow']} **Scroll Up** - View earlier songs in playlist
+{EMOJIS['uparrow']} **Scroll Up** - View past songs in playlist
 {EMOJIS['rotate']} **Current Song** - Jump back to currently playing song
 {EMOJIS['downarrow']} **Scroll Down** - View later songs in playlist
 
