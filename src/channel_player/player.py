@@ -12,6 +12,16 @@ from views.playlist import PlaylistEmbed
 
 logger = logging.getLogger(__name__)
 
+async def delete_msg(msg: discord.Message):
+    """Delete a message if it exists"""
+    if msg:
+        try:
+            await msg.delete()
+        except discord.NotFound:
+            pass
+        except Exception as e:
+            logger.error(f"Error deleting message: {e}")
+
 class ChannelPlayer:
     async def new(self, channel: discord.VoiceChannel, bot):
         self.bot = bot
@@ -26,10 +36,13 @@ class ChannelPlayer:
         self.embed = PlaylistEmbed(self)
         self.view = ControlPanel(self)
         self.control_panel_msg = None
+        asyncio.create_task(self._check_empty_channel())
+
         return self
 
     async def _check_empty_channel(self):
         """Check if voice channel is empty and disconnect if so"""
+        logger.info(f"Starting channel monitoring for: {self.channel.name}...")
         while self.client and self.client.is_connected():
             try:
                 await asyncio.sleep(30)
@@ -41,7 +54,7 @@ class ChannelPlayer:
                     return
 
             except Exception as e:
-                logger.error(f"Error checking empty channel: {e}")
+                logger.error(f"Error checking for an empty channel: {e}")
                 break
 
     async def play(self, interaction: discord.Interaction, url: str | None = None):
@@ -50,8 +63,9 @@ class ChannelPlayer:
 
         if not url and self.client.is_paused():
             self.client.resume()
+            return
 
-        elif not self.client.is_playing():
+        if not self.client.is_playing():
             await self.loop()
 
     async def loop(self):
@@ -114,6 +128,8 @@ class ChannelPlayer:
         except:
             await send_response(interaction, f"The amount of songs to skip specified: '{n}' is not a number")
         self.index += n - 1
+        if self.index > len(self.playlist) - 1:
+            self.index = len(self.playlist) - 1
         self.client.stop()
 
     async def rewind(self, interaction, n):
@@ -122,6 +138,8 @@ class ChannelPlayer:
         except:
             await send_response(interaction, f"The amount of songs to skip specified: '{n}' is not a number")
         self.index -= n + 1
+        if self.index < 0:
+            self.index = 0
         self.client.stop()
 
     async def change_volume(self, interaction, volume_str: str):
@@ -158,13 +176,16 @@ class ChannelPlayer:
         await send_response(interaction, "Playlist shuffled!")
 
     async def stop(self):
-        if not self.client or not self.client.is_connected():
-            return
         if self.control_panel_msg:
-            await self.control_panel_msg.delete()
-        self.client.stop()
-        await self.client.disconnect()
-        self.bot.manager.channels.remove(self)
+            await delete_msg(self.control_panel_msg)
+        if self.client and self.client.is_connected():
+            if self.client.is_playing() or self.client.is_paused():
+                self.client.stop()
+            await self.client.disconnect()
+        try:
+            self.bot.manager.channels.remove(self)
+        except ValueError:
+            pass
 
     async def search_yt(self, interaction: discord.Interaction, url: str | None):
         if not url:
@@ -182,7 +203,8 @@ class ChannelPlayer:
     def parse_url_impl(self, url):
         try:
             return self.bot.ytdl.extract_info(url, download=False)
-        except:
+        except Exception as e:
+            logger.error(f"Error parsing URL {url}: {e}")
             return {}
 
     async def parse_url(self, interaction: discord.Interaction, url: str, at_end = True):
@@ -239,4 +261,4 @@ class ChannelPlayer:
         else:
             self.control_panel_msg = await self.channel.send(embed=self.embed.embed, view=self.view)
             if last_msg:
-                await last_msg.delete()
+                await delete_msg(last_msg)

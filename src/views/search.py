@@ -4,6 +4,11 @@ import discord
 async def make_search_view(player, interaction, search_result):
     entries = search_result['entries'][:10]  # Limit to 10 for dropdown
 
+    if len(entries) == 1:
+        # If there's only one entry, automatically select it
+        await interaction.response.send_message(f"Playing: **{entries[0]['title']}**")
+        return entries[0]['url']
+
     # Create embed
     embed = discord.Embed(
         title=f"Found {len(entries)} results:",
@@ -15,7 +20,7 @@ async def make_search_view(player, interaction, search_result):
     options = []
     for i, entry in enumerate(entries):
         duration = entry.get('duration', 0)
-        duration_str = f"{duration//60}:{duration%60:02f}" if duration else "Unknown"
+        duration_str = f"{duration//60}:{duration%60:02d}" if duration else "Unknown"
 
         options.append(discord.SelectOption(
             label=entry['title'][:100],

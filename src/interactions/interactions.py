@@ -1,5 +1,8 @@
 import discord
 import asyncio
+import logging
+
+logger = logging.getLogger(__name__)
 
 async def _delete_after_delay(message, delay: int | None = 10):
     """Helper function to delete a message after a delay"""
@@ -20,5 +23,5 @@ async def send_response(interaction: discord.Interaction, content: str, embed=No
 async def defer(interaction: discord.Interaction):
     try:
         await interaction.response.defer(ephemeral=True)
-    except:
-        pass
+    except Exception as e:
+        logger.error(f"Error deferring interaction: {e}")

@@ -8,15 +8,22 @@ class PlaylistEmbed:
         self.player = player
         self.make_embed()
 
+    def _add_prefix(self, description: str) -> str:
+        description += f"\n**Playlist: {len(self.player.playlist)} songs**"
+
+        volume_percentage = int(self.player.volume * 100)
+        description += f"\n**Volume: {volume_percentage}%**"
+        return description
+
     def make_embed(self):
         total_songs = len(self.player.playlist)
         if not total_songs:
-            self.embed = discord.Embed(color=Config.COLOR, title="Nothing is playing", description="No songs in playlist, use /play *youtube link* to play something" if not self.player.minimized else None)
+            self.embed = discord.Embed(color=Config.COLOR, title="Nothing is playing", description=self._add_prefix("No songs in playlist, use /play *youtube link* to play something") if not self.player.minimized else None)
             return self.embed
 
         playing = self.player.playlist[self.player.index]
         if total_songs == 1:
-            self.embed = discord.Embed(color=Config.COLOR, title=f"🎵 {playing.name}", description="No songs in playlist, use /play *youtube link* to play something" if not self.player.minimized else None)
+            self.embed = discord.Embed(color=Config.COLOR, title=playing.format_song(), description=self._add_prefix("No songs in playlist, use /play *youtube link* to play something") if not self.player.minimized else None)
             return self.embed
 
         if not self._manual_scroll:
@@ -33,12 +40,9 @@ class PlaylistEmbed:
             if song is playing:
                 description += f'**{song.format_song()}**\n'
             else:
-                description += f'`{abs(i+self.queue_offset-self.player.index)}.` {song.format_song(False)}\n'
+                description += f'`{i+self.queue_offset-self.player.index}`. {song.format_song(False)}\n'
 
-        description += f"\n**Playlist: {len(self.player.playlist)} songs**"
-
-        volume_percentage = int(self.player.volume * 100)
-        description += f"\n**Volume: {volume_percentage}%**"
+        description = self._add_prefix(description)
 
         self.embed = discord.Embed(color=Config.COLOR, title=playing.format_song(), description=description if not self.player.minimized else None)
 

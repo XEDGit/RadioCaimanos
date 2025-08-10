@@ -100,7 +100,11 @@ class ControlPanel(discord.ui.View):
         file_content = io.StringIO(description)
         file = discord.File(file_content, filename="playlist.txt") # type: ignore
 
-        await interaction.user.send("🎵 **Current Playlist**", file=file)
+        try:
+            await interaction.user.send("🎵 **Current Playlist**", file=file)
+        except discord.Forbidden:
+            await interaction.followup.send("❌ I can't send you DMs, please enable them and try again.", ephemeral=True)
+            return
         await interaction.followup.send("✅ Playlist sent to your DMs!", ephemeral=True)
 
     @discord.ui.button(emoji=Config.EMOJIS['minus'], style=discord.ButtonStyle.secondary, row=2)
